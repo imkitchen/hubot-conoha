@@ -1,28 +1,23 @@
 {
   "name": "hubot-conoha",
-  "description": "A hubot script that does the things",
+  "description": "ConoHa APIを叩いて情報を取得する",
   "version": "0.0.0",
   "author": "Yosuke Tamura <tamura.yosuke.tp8@gmail.com>",
   "license": "MIT",
-
-  "keywords": "hubot, hubot-scripts",
-
+  "keywords": "hubot, hubot-scripts, conoha",
   "repository": {
     "type": "git",
-    "url": "git://github.com/hubot-scripts/hubot-conoha.git"
+    "url": "git://github.com/imkitchen/hubot-conoha.git"
   },
-
   "bugs": {
-    "url": "https://github.com/hubot-scripts/hubot-conoha/issues"
+    "url": "https://github.com/imkitchen/hubot-conoha/issues"
   },
-
   "dependencies": {
+    "request": "~2.61.0"
   },
-
   "peerDependencies": {
     "hubot": "2.x"
   },
-
   "devDependencies": {
     "chai": "^2.1.1",
     "coffee-script": "1.6.3",
@@ -37,9 +32,7 @@
     "sinon": "^1.13.0",
     "sinon-chai": "^2.7.0"
   },
-
   "main": "index.coffee",
-
   "scripts": {
     "test": "grunt test"
   }
