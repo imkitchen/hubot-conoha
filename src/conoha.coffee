@@ -12,11 +12,12 @@
 #   hubot conoha billing invoices - 課金アイテムへの請求データ一覧を取得します。
 #
 # Notes:
-#   <optional notes required for the script>
+#   hubot-authに依存しますのでHUBOT_AUTH_ADMINの設定も必要です。
 #
 # Author:
 #   Yosuke Tamura <tamura.yosuke.tp8@gmail.com>
 request = require 'request'
+#TODO: hubot-auth
 
 module.exports = (robot) ->
 
@@ -38,12 +39,12 @@ module.exports = (robot) ->
     # トークンクラス
     class Token
       constructor: (token) ->
-        @expires = token.expires
+        @expires = token.expires # ISO 8601
         @id      = token.id
         
       # アクセストークンがまだ有効か調べる
       isExpired: ->
-        #TODO: 時刻比較
+        #TODO: 時刻比較(今は手動でトークン更新してる)
         true || false
 
     # アクセス情報を取得する
@@ -61,19 +62,58 @@ module.exports = (robot) ->
           else
             self.access = JSON.parse(body).access
 
-    #TODO: NotImplemented
-    account:
-      orderItems: (item_id) ->
-        {}
-      productItems: ->
-        {}
-      paymentHistory: ->
-        {}
-      billingInvoices: (invoice_id) ->
-        {}
-
-
+    class NotImplementedError extends Error
       
+    #TODO: NotImplemented
+    getAccountService: ->
+      @accountService || @accountService = new AccountService(@access)
+
+    class AccountService
+      # https://www.conoha.jp/docs/account-get_version_list.html
+      getVersion: ->
+        throw new NotImplemtntedError 'getVersion'
+
+      # https://www.conoha.jp/docs/account-get_version_detail.html
+      getVersionDetail: ->
+        throw new NotImplemtntedError 'getVersionDetail'
+
+      # https://www.conoha.jp/docs/account-order-item-list.html
+      # https://www.conoha.jp/docs/account-order-item-detail-specified.html
+      getOrderItems: (item_id) ->
+        throw new NotImplemtntedError 'getOrderItems'
+
+      # https://www.conoha.jp/docs/account-products.html
+      getProductItems: ->
+        throw new NotImplemtntedError 'getProductItems'
+
+      # https://www.conoha.jp/docs/account-payment-histories.html
+      getPaymentHistory: ->
+        throw new NotImplemtntedError 'getPaymentHistory'
+
+      # https://www.conoha.jp/docs/account-billing-invoices-list.html
+      # https://www.conoha.jp/docs/account-order-item-detail-specified.html
+      getBillingInvoices: (invoice_id) ->
+        throw new NotImplementedError 'getBillingInvoices'
+
+      # https://www.conoha.jp/docs/account-informations-list.html
+      # https://www.conoha.jp/docs/account-informations-detail-specified.html
+      getNotifications: (notification_code) ->
+        throw new NotImplementedError 'getNotifications'
+
+      # https://www.conoha.jp/docs/account-informations-marking.html
+      putNotifications: (notification_code) ->
+        throw new NotImplementedError 'putNotifications'
+
+      # https://www.conoha.jp/docs/account-get_objectstorage_request_rrd.html
+      getObjectStorageRRDRequest: ->
+        throw new NotImplementedError 'getObjectStorageRRDRequest'
+
+      # https://www.conoha.jp/docs/account-get_objectstorage_size_rrd.html
+      getObjectStorageRRDSize: ->
+        throw new NotImplementedError 'getObjectStorageRRDSize'
+
+   
+
   # インスタンス生成
   conoha = new ConoHa(service, authInfo)
 
@@ -85,6 +125,7 @@ module.exports = (robot) ->
     else
       msg.reply "トークン取得失敗"
 
-  robot.respond /conoha billing invoices/, (msg) ->
-    #
+  robot.respond /conoha version/, (msg) ->
+    #s = conoha.getAccountService()
+    #s.
     msg.reply ""
