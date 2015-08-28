@@ -133,14 +133,16 @@ module.exports = (robot) ->
 
   # コマンド 
   robot.respond /conoha token/, (msg) ->
-    conoha.authenticate()
-    if conoha.access.token.id && conoha.access.token.expires
-      msg.reply "トークン取得成功 #{conoha.access.token.id} #{conoha.access.token.expires}"
-    else
-      msg.reply "トークン取得失敗"
+    if robot.auth.hasRole msg.envelope.user, 'conoha'
+      conoha.authenticate()
+      if conoha.access.token.id && conoha.access.token.expires
+        msg.reply "トークン取得成功 #{conoha.access.token.id} #{conoha.access.token.expires}"
+      else
+        msg.reply "トークン取得失敗"
 
   robot.respond /conoha account version/, (msg) ->
-    s = conoha.getAccountService()
-    s.getVersions (versions) ->
-      currentVersion = _.findWhere versions, {status: "CURRENT"}
-      msg.reply "#{currentVersion.id}"
+    if robot.auth.hasRole msg.envelope.user, 'conoha'
+      s = conoha.getAccountService()
+      s.getVersions (versions) ->
+        currentVersion = _.findWhere versions, {status: "CURRENT"}
+        msg.reply "#{currentVersion.id}"
