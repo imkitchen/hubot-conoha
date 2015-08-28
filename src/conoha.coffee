@@ -9,6 +9,8 @@
 #
 # Commands:
 #   hubot conoha token - アクセストークンの更新
+#   hubot conoha account version - AccountServiceのAPIバージョン情報取得
+#   hubot conoha payment summary - 入金のサマリーを取得します。
 #   hubot conoha billing invoices - 課金アイテムへの請求データ一覧を取得します。
 #
 # Notes:
@@ -103,6 +105,20 @@ module.exports = (robot) ->
       getPaymentHistory: ->
         throw new NotImplemtntedError 'getPaymentHistory'
 
+      # https://www.conoha.jp/docs/account-payment-summary.html
+      getPaymentSummary: (next) ->
+        request.get
+          url: @endpoint+"/v1/#{authInfo.auth.tenantId}/payment-summary"
+          headers:
+            'Accept': 'application/json'
+            'X-Auth-Token': @access.token.id
+          (err, res, body) ->
+            if err
+              console.log err
+            else
+              summary = JSON.parse(body).payment_summary
+              next(summary)
+
       # https://www.conoha.jp/docs/account-billing-invoices-list.html
       # https://www.conoha.jp/docs/account-order-item-detail-specified.html
       getBillingInvoices: (next, invoice_id) -> #TODO: options
@@ -127,7 +143,6 @@ module.exports = (robot) ->
               else
                 invoices = JSON.parse(body).billing_invoices
                 next(invoices)
-        #throw new NotImplementedError 'getBillingInvoices'
 
       # https://www.conoha.jp/docs/account-informations-list.html
       # https://www.conoha.jp/docs/account-informations-detail-specified.html
@@ -167,7 +182,14 @@ module.exports = (robot) ->
         currentVersion = _.findWhere versions, {status: "CURRENT"}
         msg.reply "#{currentVersion.id}"
 
-  robot.respond /conoha account billing invoice/, (msg) ->
+  robot.respond /conoha payment summary/, (msg) ->
+    if robot.auth.hasRole msg.envelope.user, 'conoha'
+      account = conoha.getAccountService()
+      account.getPaymentSummary (summary) ->
+        msg.reply "総入金額は#{summary.total_deposit_amount}円です"
+    else
+
+  robot.respond /conoha billing invoice/, (msg) ->
     if robot.auth.hasRole msg.envelope.user, 'conoha'
       account = conoha.getAccountService()
       account.getBillingInvoices (invoices) ->
