@@ -116,6 +116,7 @@ module.exports = (robot) ->
           url: url
           headers:
             'Accept': 'application/json'
+            'X-Auth-Token': @access.token.id
           (err, res, body) ->
             if err
               console.log err
