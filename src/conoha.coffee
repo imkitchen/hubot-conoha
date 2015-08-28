@@ -8,6 +8,7 @@
 #   HUBOT_CONOHA_PASSWORD
 #
 # Commands:
+#   hubot conoha token - アクセストークンの更新
 #   hubot conoha billing invoices - 課金アイテムへの請求データ一覧を取得します。
 #
 # Notes:
@@ -32,8 +33,7 @@ module.exports = (robot) ->
   # ConoHa APIクラス
   class ConoHa
     constructor: (@service, @authInfo) ->
-      @access = @getAccess()
-      @token  = new Token(@access.token)
+      @authenticate()
 
     # トークンクラス
     class Token
@@ -47,7 +47,7 @@ module.exports = (robot) ->
         true || false
 
     # アクセス情報を取得する
-    getAccess: ->
+    authenticate: ->
       self = @
       request.post
         url: @service+'/tokens'
@@ -59,7 +59,7 @@ module.exports = (robot) ->
             #robot.logger.log err
             console.log err
           else
-            JSON.parse(body).access
+            self.access = JSON.parse(body).access
 
     #TODO: NotImplemented
     account:
@@ -70,22 +70,21 @@ module.exports = (robot) ->
       paymentHistory: ->
         {}
       billingInvoices: (invoice_id) ->
-        #if invoice_id
-        # 
-        #else
         {}
-      
 
+
+      
   # インスタンス生成
   conoha = new ConoHa(service, authInfo)
-  
-  robot.respond /token/, (msg) ->
-    access = conoha.getAccess()
-    if access.token
-      msg.reply = "トークン取得成功"
-    else
-      msg.reply = "トークン取得失敗"
 
-  robot.respond /billing invoices/, (msg) ->
+  # コマンド 
+  robot.respond /conoha token/, (msg) ->
+    conoha.authenticate()
+    if conoha.access.token.id && conoha.access.token.expires
+      msg.reply "トークン取得成功 #{conoha.access.token.id} #{conoha.access.token.expires}"
+    else
+      msg.reply "トークン取得失敗"
+
+  robot.respond /conoha billing invoices/, (msg) ->
     #
     msg.reply ""
