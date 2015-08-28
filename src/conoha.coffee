@@ -172,6 +172,7 @@ module.exports = (robot) ->
       account = conoha.getAccountService()
       account.getBillingInvoices (invoices) ->
         if invoices.length != 0
-          msg.reply "利用料金は#{invoices[0].bill_plus_tax}円です"
+          msg.reply "利用料金は#{invoices[0].bill_plas_tax}円です" 
+          #NOTE: plusだと思うけどAPIがこうなんだからしょうがない
         else
           msg.reply "請求情報はありません"
