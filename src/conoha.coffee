@@ -85,7 +85,6 @@ module.exports = (robot) ->
             else
               versions = JSON.parse(body).versions
               next(versions)
-        #throw new NotImplemtntedError 'getVersion'
 
       # https://www.conoha.jp/docs/account-get_version_detail.html
       getVersionDetail: ->
@@ -106,8 +105,28 @@ module.exports = (robot) ->
 
       # https://www.conoha.jp/docs/account-billing-invoices-list.html
       # https://www.conoha.jp/docs/account-order-item-detail-specified.html
-      getBillingInvoices: (invoice_id) ->
-        throw new NotImplementedError 'getBillingInvoices'
+      getBillingInvoices: (next, invoice_id) -> #TODO: options
+        url = ""
+        if invoice_id
+          url = @endpoint+"/v1/#{authInfo.auth.tenantId}/billing-invoices/#{invoice_id}"
+        else
+          url = @endpoint+"/v1/#{authInfo.auth.tenantId}/billing-invoices"
+
+        request.get
+          url: url
+          headers:
+            'Accept': 'application/json'
+          (err, res, body) ->
+            if err
+              console.log err
+            else
+              if invoice_id
+                invoice = JSON.parse(body).billing_invoice
+                next(invoice)
+              else
+                invoices = JSON.parse(body).billing_invoices
+                next(invoices)
+        #throw new NotImplementedError 'getBillingInvoices'
 
       # https://www.conoha.jp/docs/account-informations-list.html
       # https://www.conoha.jp/docs/account-informations-detail-specified.html
@@ -142,7 +161,16 @@ module.exports = (robot) ->
 
   robot.respond /conoha account version/, (msg) ->
     if robot.auth.hasRole msg.envelope.user, 'conoha'
-      s = conoha.getAccountService()
-      s.getVersions (versions) ->
+      account = conoha.getAccountService()
+      account.getVersions (versions) ->
         currentVersion = _.findWhere versions, {status: "CURRENT"}
         msg.reply "#{currentVersion.id}"
+
+  robot.respond /conoha account billing invoice/, (msg) ->
+    if robot.auth.hasRole msg.envelope.user, 'conoha'
+      account = conoha.getAccountService()
+      account.getBillingInvoices (invoices) ->
+        if invoices.length != 0
+          msg.reply "利用料金は#{invoices[0].bill_plus_tax}円です"
+        else
+          msg.reply "請求情報はありません"
