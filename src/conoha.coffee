@@ -17,6 +17,7 @@
 # Author:
 #   Yosuke Tamura <tamura.yosuke.tp8@gmail.com>
 request = require 'request'
+_       = require 'lodash'
 #TODO: hubot-auth
 
 module.exports = (robot) ->
@@ -69,9 +70,22 @@ module.exports = (robot) ->
       @accountService || @accountService = new AccountService(@access)
 
     class AccountService
+      constructor: (@access) ->
+        @endpoint = "https://account.tyo1.conoha.io"
+
       # https://www.conoha.jp/docs/account-get_version_list.html
-      getVersion: ->
-        throw new NotImplemtntedError 'getVersion'
+      getVersions: (next) ->
+        request.get
+          url: @endpoint+'/'
+          headers:
+            'Accept': 'application/json'
+          (err, res, body) ->
+            if err
+              console.log err
+            else
+              versions = JSON.parse(body).versions
+              next(versions)
+        #throw new NotImplemtntedError 'getVersion'
 
       # https://www.conoha.jp/docs/account-get_version_detail.html
       getVersionDetail: ->
@@ -125,7 +139,8 @@ module.exports = (robot) ->
     else
       msg.reply "トークン取得失敗"
 
-  robot.respond /conoha version/, (msg) ->
-    #s = conoha.getAccountService()
-    #s.
-    msg.reply ""
+  robot.respond /conoha account version/, (msg) ->
+    s = conoha.getAccountService()
+    s.getVersions (versions) ->
+      currentVersion = _.findWhere versions, {status: "CURRENT"}
+      msg.reply "#{currentVersion.id}"
