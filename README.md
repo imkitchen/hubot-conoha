@@ -1,16 +1,16 @@
 # hubot-conoha
 
-A hubot script that does the things
+ConoHaのAPIを叩く！
 
-See [`src/conoha.coffee`](src/conoha.coffee) for full documentation.
+![美雲このは](https://1.gravatar.com/avatar/dc723885bd12b6c783a86bbd9d6582f6?s=256&d=mm&r=g "美雲このは")
 
-## Installation
+[`src/conoha.coffee`](src/conoha.coffee)もみてね！
 
-In hubot project repo, run:
+## インストール
 
 `npm install hubot-conoha --save`
 
-Then add **hubot-conoha** to your `external-scripts.json`:
+**hubot-conoha** を `external-scripts.json` に追加する:
 
 ```json
 [
@@ -18,9 +18,21 @@ Then add **hubot-conoha** to your `external-scripts.json`:
 ]
 ```
 
-## Sample Interaction
+## 例
 
 ```
-user1>> hubot hello
-hubot>> hello!
+user1>> hubot conoha token
+hubot>> トークン取得成功
 ```
+
+## 免責事項
+hubot-conohaはGMOインターネット株式会社とは一切関係ありません。
+利用は全て自己責任でお願いします。
+
+本OSSで生じたいかなる損害もコントリビュータはその責任負わないものとします。
+
+## ライセンス
+MITライセンスです
+
+## コントリビュータ
+API全部網羅するのはしんどいのでコントリビュータ募集中です
