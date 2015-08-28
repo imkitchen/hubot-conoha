@@ -65,11 +65,18 @@ module.exports = (robot) ->
           else
             self.access = JSON.parse(body).access
 
+
     class NotImplementedError extends Error
-      
-    #TODO: NotImplemented
+
+
+    # Services      
     getAccountService: ->
       @accountService || @accountService = new AccountService(@access)
+    getComputeService: ->
+      @computeService || @computeService = new ComputeService(@access)
+    #...
+
+    #TODO: class IdentityService
 
     class AccountService
       constructor: (@access) ->
@@ -161,7 +168,20 @@ module.exports = (robot) ->
       getObjectStorageRRDSize: ->
         throw new NotImplementedError 'getObjectStorageRRDSize'
 
-   
+
+    class ComputeService
+      constructor: (@access) ->
+        @endpoint = "https://compute.tyo1.conoha.io"
+
+      # https://www.conoha.jp/docs/compute-get_version_list.html
+      getVersions: (versions) ->
+        throw NotImplementedError 'getVersions'
+
+      getVersionDetail: ->
+        throw NotImplementedError 'getVersionDetail'
+
+      #...
+
 
   # インスタンス生成
   conoha = new ConoHa(service, authInfo)
