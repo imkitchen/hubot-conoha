@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/imkitchen/hubot-conoha.svg)](https://travis-ci.org/imkitchen/hubot-conoha)
+
 # hubot-conoha
 
 ConoHaのAPIを叩く！
